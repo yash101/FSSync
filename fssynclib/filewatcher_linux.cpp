@@ -19,6 +19,8 @@ Description:
 #include <dirent.h>
 #include <stdio.h>
 
+#include "smartptr.h"
+
 int Watcher::FileWatcher::initialize()
 {
   setup.inotify_file_descriptor = inotify_init();
@@ -76,6 +78,17 @@ void Watcher::FileWatcher::watch()
 
 void Watcher::FileWatcher::watch_()
 {
+
+  SmartPointer<struct inotify_event> events(new struct inotify_event[128], 128);
+
+  while(true)
+  {
+    ssize_t len = read(setup.inotify_file_descriptor, events.get(), sizeof(struct inotify_event) * events.size());
+    size_t n = len / sizeof(struct inotify_event);
+    printf("Recieved: %d structs\n", n);
+  }
+
+/*
   char buffer[128 * sizeof(struct inotify_event)]
       __attribute__((aligned(__alignof__(struct inotify_event))));
   struct inotify_event* ptr;
@@ -108,7 +121,7 @@ void Watcher::FileWatcher::watch_()
 
       ptr++;
     }
-  }
+  }*/
 }
 
 #endif	// ifdef __linux__

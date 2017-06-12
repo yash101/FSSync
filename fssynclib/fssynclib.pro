@@ -28,7 +28,8 @@ SOURCES += fssynclib.cpp \
 
 HEADERS += fssynclib.h \
     filewatcher_linux.h \
-    filewatcher.h
+    filewatcher.h \
+    smartptr.h
 
 unix {
     target.path = /usr/lib
