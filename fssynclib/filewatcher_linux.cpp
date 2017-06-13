@@ -103,18 +103,62 @@ void Watcher::FileWatcher::watch()
   watch_();
 }
 
+#define MAKE_BLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK)
+#define MAKE_UNBLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
+
+void process(std::vector<struct inotify_event>& events)
+{
+  for(size_t i = 0; i < events.size(); i++)
+  {
+    printf("EVENT: name: %s; len: %d; cookie: %d; mask: %d", events[i].name, events[i].len, events[i].cookie, events[i].mask);
+  }
+}
+
 void Watcher::FileWatcher::watch_()
 {
   int d = 0;
 #define debug printf("Reached line %d; d=%d\n", __LINE__, d++)
-
-  debug;
 
   std::vector<struct inotify_event> events;
   events.reserve(32);
   struct inotify_event evt;
   bool simFlag = false;
 
+  MAKE_BLOCK(setup.inotify_file_descriptor);
+
+  while(true)
+  {
+    ssize_t ret = read(setup.inotify_file_descriptor, &evt, sizeof(decltype(evt)));
+    if(ret < 0)
+    {
+      int err = errno;
+      if(err == EAGAIN)
+      {
+        simFlag = false;
+        MAKE_BLOCK(setup.inotify_file_descriptor);
+        process(events);
+        events.clear();
+        continue;
+      }
+      else break;
+    }
+    else
+    {
+      MAKE_UNBLOCK(setup.inotify_file_descriptor);
+      simFlag = true;
+      events.push_back(evt);
+    }
+  }
+
+
+
+
+
+
+
+
+
+/*
   fd_set sfd;
   FD_ZERO(&sfd);
   FD_SET(setup.inotify_file_descriptor, &sfd);
@@ -125,18 +169,18 @@ void Watcher::FileWatcher::watch_()
     d = 0;
     debug;
 //    if(!simFlag)	//We will block just in case
-    {
-      events.clear();
-      debug;
-      ssize_t ret = select(setup.inotify_file_descriptor + 1, &sfd_n, NULL, NULL, NULL);
-      if(ret < 0)
-      {
-        int err = errno;
-        printf("SELECT() ERROR: '%s'(%d): %d\n", strerror(err), err, __LINE__);
-      }
-      printf("SELECT() RETURNED: '%zd'\n", ret);
-      debug;
-    }
+//    {
+//      events.clear();
+//      debug;
+//      ssize_t ret = select(setup.inotify_file_descriptor + 1, &sfd_n, NULL, NULL, NULL);
+//      if(ret < 0)
+//      {
+//        int err = errno;
+//        printf("SELECT() ERROR: '%s'(%d): %d\n", strerror(err), err, __LINE__);
+//      }
+//      printf("SELECT() RETURNED: '%zd'\n", ret);
+//      debug;
+//    }
     debug;
     ssize_t len = read(setup.inotify_file_descriptor, &evt, sizeof(struct inotify_event));
     debug;
@@ -158,7 +202,7 @@ void Watcher::FileWatcher::watch_()
     {
       events.push_back(evt);
     }
-  }
+  }*/
 
 /*
   char buffer[128 * sizeof(struct inotify_event)]
