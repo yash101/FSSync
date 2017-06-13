@@ -13,22 +13,41 @@ Description:
 #include "filewatcher.h"
 #include <sys/inotify.h>
 #include <sys/stat.h>
+#include <sys/select.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include <string.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <vector>
 
 #include "smartptr.h"
 
 int Watcher::FileWatcher::initialize()
 {
   setup.inotify_file_descriptor = inotify_init();
+  fcntl(setup.inotify_file_descriptor, F_SETFL, fcntl(setup.inotify_file_descriptor, F_GETFL) | O_NONBLOCK);
   return 0;
 }
 
 int Watcher::FileWatcher::begin_watching()
 {
+  if(folder.back() == '/' || folder.back() == '\\')
+    folder.pop_back();
+  int wd = inotify_add_watch(setup.inotify_file_descriptor, folder.c_str(), IN_ALL_EVENTS);
+
+#ifdef DEBUG
+      printf("Adding directory, '%s'\n", folder.c_str());
+#endif
+
+  if(wd < 0)
+  {
+    int err = errno;
+    printf("[%s](%d) Failed to add root directory, '%s'\n", strerror(err), err, folder.c_str());
+    return -1;
+  }
+
   add_directory(folder.c_str());
   return 0;
 }
@@ -58,34 +77,87 @@ int Watcher::FileWatcher::add_directory(const char* directory)
 
       struct stat st;
       stat(dir->d_name, &st);
-      if(strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..") && S_ISDIR(st.st_mode))
+      if((strcmp(dir->d_name, "."))
+         && (strcmp(dir->d_name, ".."))
+         && S_ISDIR(st.st_mode) != 0
+      )
       {
-        add_directory(dir->d_name);
+        printf("Adding directory, '%s'\n", dir->d_name);
+        std::string dirname = directory;
+        dirname += '/';
+        dirname += dir->d_name;
+        add_directory(dirname.c_str());
       }
     }
 
     closedir(d);
   }
 
+
   return 0;
 }
 
 void Watcher::FileWatcher::watch()
 {
-  printf("Hi!");
+  printf("Hi!\n");
   watch_();
 }
 
 void Watcher::FileWatcher::watch_()
 {
+  int d = 0;
+#define debug printf("Reached line %d; d=%d\n", __LINE__, d++)
 
-  SmartPointer<struct inotify_event> events(new struct inotify_event[128], 128);
+  debug;
+
+  std::vector<struct inotify_event> events;
+  events.reserve(32);
+  struct inotify_event evt;
+  bool simFlag = false;
+
+  fd_set sfd;
+  FD_ZERO(&sfd);
+  FD_SET(setup.inotify_file_descriptor, &sfd);
 
   while(true)
   {
-    ssize_t len = read(setup.inotify_file_descriptor, events.get(), sizeof(struct inotify_event) * events.size());
-    size_t n = len / sizeof(struct inotify_event);
-    printf("Recieved: %d structs\n", n);
+    fd_set sfd_n = sfd;
+    d = 0;
+    debug;
+//    if(!simFlag)	//We will block just in case
+    {
+      events.clear();
+      debug;
+      ssize_t ret = select(setup.inotify_file_descriptor + 1, &sfd_n, NULL, NULL, NULL);
+      if(ret < 0)
+      {
+        int err = errno;
+        printf("SELECT() ERROR: '%s'(%d): %d\n", strerror(err), err, __LINE__);
+      }
+      printf("SELECT() RETURNED: '%zd'\n", ret);
+      debug;
+    }
+    debug;
+    ssize_t len = read(setup.inotify_file_descriptor, &evt, sizeof(struct inotify_event));
+    debug;
+    simFlag = true;
+    if(len < 0)
+    {
+      int err = errno;
+      if(err == EAGAIN)
+      {
+        simFlag = false;
+        //process(events)
+      }
+    }
+    else if(len == 0)	//BIG TIME ERROR!
+    {
+      printf("[FATAL] read returned 0\n");
+    }
+    else
+    {
+      events.push_back(evt);
+    }
   }
 
 /*
