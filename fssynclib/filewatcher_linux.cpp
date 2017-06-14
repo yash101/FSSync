@@ -21,32 +21,51 @@ Description:
 #include <dirent.h>
 #include <stdio.h>
 #include <vector>
+#include <map>
 
-#include "smartptr.h"
+#define MAKE_BLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK)
+#define MAKE_UNBLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
 
 int Watcher::FileWatcher::initialize()
 {
   setup.inotify_file_descriptor = inotify_init();
-  fcntl(setup.inotify_file_descriptor, F_SETFL, fcntl(setup.inotify_file_descriptor, F_GETFL) | O_NONBLOCK);
+  MAKE_BLOCK(setup.inotify_file_descriptor);
   return 0;
 }
+
+#define WATCH_ATTR IN_ATTRIB | IN_CREATE | IN_DELETE | IN_DELETE_SELF | IN_MODIFY | IN_MOVE_SELF | IN_MOVE | IN_UNMOUNT | IN_EXCL_UNLINK
+
+#define ATTRIB_TO_STRING(attrib, str) \
+  if(attrib == IN_ATTRIB) str += " IN_ATTRIB ";\
+  if(attrib == IN_CREATE) str += " IN_CREATE ";\
+  if(attrib == IN_DELETE) str += " IN_DELETE ";\
+  if(attrib == IN_DELETE_SELF) str += " IN_DELETE_SELF ";\
+  if(attrib == IN_MODIFY) str += " IN_MODIFY ";\
+  if(attrib == IN_MOVE_SELF) str += " IN_MODIFY_SELF ";\
+  if(attrib == IN_MOVE) str += " IN_MODIFY ";\
+  if(attrib == IN_UNMOUNT) str += " IN_UNMOUND ";\
+  if(attrib == IN_EXCL_UNLINK) str += " IN_EXCL_UNLINK "
 
 int Watcher::FileWatcher::begin_watching()
 {
   if(folder.back() == '/' || folder.back() == '\\')
     folder.pop_back();
-  int wd = inotify_add_watch(setup.inotify_file_descriptor, folder.c_str(), IN_ALL_EVENTS);
+  Watcher::WatchedItem item;
+  item.wd = inotify_add_watch(setup.inotify_file_descriptor, folder.c_str(), WATCH_ATTR);
+  item.location = folder;
 
 #ifdef DEBUG
-      printf("Adding directory, '%s'\n", folder.c_str());
-#endif
+  printf("Adding directory, '%s'\n", folder.c_str());
+  #endif
 
-  if(wd < 0)
+  if(item.wd < 0)
   {
     int err = errno;
     printf("[%s](%d) Failed to add root directory, '%s'\n", strerror(err), err, folder.c_str());
     return -1;
   }
+
+  setup.watching[item.wd] = item;
 
   add_directory(folder.c_str());
   return 0;
@@ -63,29 +82,30 @@ int Watcher::FileWatcher::add_directory(const char* directory)
   {
     while((dir = readdir(d)) != NULL)
     {
-#ifdef DEBUG
-      printf("Adding directory (INODE: %lu), '%s'\n", dir->d_ino, dir->d_name);
-#endif
-
-      int wd = inotify_add_watch(setup.inotify_file_descriptor, dir->d_name, IN_ALL_EVENTS);
-
-      if(wd < 0)
-      {
-        int err = errno;
-        printf("[%s](%d) Failed to add directory (INODE: %lu), '%s'\n", strerror(err), err, dir->d_ino, dir->d_name);
-      }
-
       struct stat st;
       stat(dir->d_name, &st);
-      if((strcmp(dir->d_name, "."))
-         && (strcmp(dir->d_name, ".."))
-         && S_ISDIR(st.st_mode) != 0
-      )
+      if((strcmp(dir->d_name, ".")) && (strcmp(dir->d_name, "..")) && S_ISDIR(st.st_mode) != 0)
       {
+#ifdef DEBUG
+        printf("Adding directory (INODE: %lu), '%s'\n", dir->d_ino, dir->d_name);
+#endif
+
+        Watcher::WatchedItem item;
+        item.wd = inotify_add_watch(setup.inotify_file_descriptor, dir->d_name, WATCH_ATTR);
+
+        if(item.wd < 0)
+        {
+          int err = errno;
+          printf("[%s](%d) Failed to add directory (INODE: %lu), '%s'; skipping\n", strerror(err), err, dir->d_ino, dir->d_name);
+          continue;
+        }
+
         printf("Adding directory, '%s'\n", dir->d_name);
         std::string dirname = directory;
         dirname += '/';
         dirname += dir->d_name;
+        item.location = dirname;
+        setup.watching[item.wd] = item;
         add_directory(dirname.c_str());
       }
     }
@@ -97,147 +117,64 @@ int Watcher::FileWatcher::add_directory(const char* directory)
   return 0;
 }
 
-void Watcher::FileWatcher::watch()
+static void prune(std::vector<Watcher::InotifyEvent>& events, decltype(Watcher::WatcherSetup::watching)& watching)
 {
-  printf("Hi!\n");
-  watch_();
-}
-
-#define MAKE_BLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK)
-#define MAKE_UNBLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
-
-void process(std::vector<struct inotify_event>& events)
-{
+  //Map of pointers to each event
+  std::map<decltype(Watcher::InotifyEvent::cookie), std::vector<Watcher::InotifyEvent*> > mp;
   for(size_t i = 0; i < events.size(); i++)
   {
-    printf("EVENT: name: %s; len: %d; cookie: %d; mask: %d", events[i].name, events[i].len, events[i].cookie, events[i].mask);
+    mp[events[i].cookie].push_back(&events[i]);
+  }
+
+  for(std::map<decltype(Watcher::InotifyEvent::cookie), std::vector<Watcher::InotifyEvent*> >::const_iterator it = mp.begin(); it != mp.end(); ++it)
+  {
+    std::string evt = "";
+    ATTRIB_TO_STRING(it->second.front()->mask, evt);
+    printf("Processing events for: [%s] (wd=%d, loc=%s)\n", it->second.front()->name.c_str(), it->second.front()->wd, watching[it->second.front()->wd].location.c_str());
   }
 }
 
-void Watcher::FileWatcher::watch_()
+void Watcher::FileWatcher::watch()
 {
-  int d = 0;
-#define debug printf("Reached line %d; d=%d\n", __LINE__, d++)
+  int dbg = 0;
+#define debug printf("REACHED %d (FILE: %s), (LINE: %d)", dbg, __FILE__, __LINE__)
 
-  std::vector<struct inotify_event> events;
-  events.reserve(32);
-  struct inotify_event evt;
-  bool simFlag = false;
+  debug;
+  char buffer[8192] __attribute__((aligned(__alignof__(struct inotify_event))));
+  const struct inotify_event* event;
+  char* pointer;
 
-  MAKE_BLOCK(setup.inotify_file_descriptor);
+  std::vector<Watcher::InotifyEvent> events;
 
   while(true)
   {
-    ssize_t ret = read(setup.inotify_file_descriptor, &evt, sizeof(decltype(evt)));
+    ssize_t ret = read(setup.inotify_file_descriptor, buffer, 8192 * sizeof(char));
+
     if(ret < 0)
     {
       int err = errno;
-      if(err == EAGAIN)
+      if(err == EAGAIN || err == EINTR || err == EWOULDBLOCK)
       {
-        simFlag = false;
-        MAKE_BLOCK(setup.inotify_file_descriptor);
-        process(events);
-        events.clear();
         continue;
       }
-      else break;
-    }
-    else
-    {
-      MAKE_UNBLOCK(setup.inotify_file_descriptor);
-      simFlag = true;
-      events.push_back(evt);
-    }
-  }
-
-
-
-
-
-
-
-
-
-/*
-  fd_set sfd;
-  FD_ZERO(&sfd);
-  FD_SET(setup.inotify_file_descriptor, &sfd);
-
-  while(true)
-  {
-    fd_set sfd_n = sfd;
-    d = 0;
-    debug;
-//    if(!simFlag)	//We will block just in case
-//    {
-//      events.clear();
-//      debug;
-//      ssize_t ret = select(setup.inotify_file_descriptor + 1, &sfd_n, NULL, NULL, NULL);
-//      if(ret < 0)
-//      {
-//        int err = errno;
-//        printf("SELECT() ERROR: '%s'(%d): %d\n", strerror(err), err, __LINE__);
-//      }
-//      printf("SELECT() RETURNED: '%zd'\n", ret);
-//      debug;
-//    }
-    debug;
-    ssize_t len = read(setup.inotify_file_descriptor, &evt, sizeof(struct inotify_event));
-    debug;
-    simFlag = true;
-    if(len < 0)
-    {
-      int err = errno;
-      if(err == EAGAIN)
+      else
       {
-        simFlag = false;
-        //process(events)
+        printf("[%s](%d) read() failed! Line %d\n", strerror(err), err, __LINE__);
       }
     }
-    else if(len == 0)	//BIG TIME ERROR!
+
+    for(pointer = buffer; pointer < buffer + ret; pointer += sizeof(struct inotify_event) + event->len)
     {
-      printf("[FATAL] read returned 0\n");
+      event = (const struct inotify_event*) pointer;
+      Watcher::InotifyEvent evt;
+      evt.cookie = event->cookie;
+      evt.mask = event->mask;
+      evt.wd = event->wd;
+      evt.name = std::string(event->name, (size_t) event->len);
+      events.push_back(std::move(evt));
+      prune(events, setup.watching);
     }
-    else
-    {
-      events.push_back(evt);
-    }
-  }*/
-
-/*
-  char buffer[128 * sizeof(struct inotify_event)]
-      __attribute__((aligned(__alignof__(struct inotify_event))));
-  struct inotify_event* ptr;
-  int d = 0;
-      printf("DEBUG: [%3d]", d++);
-  while(true)
-  {
-    ssize_t len = read(setup.inotify_file_descriptor, buffer, sizeof(buffer));
-    if(len < 0)
-    {
-      int err = errno;
-      printf("[%s](%d) Error reading from the inotify file descriptor", strerror(err), err);
-      if(err == EAGAIN) continue;
-    }
-
-    while(ptr < (struct inotify_event*) buffer + len)
-    {
-      if(ptr->mask & IN_OPEN)
-        printf("IN_OPEN: ");
-      else if(ptr->mask & IN_CLOSE_NOWRITE)
-        printf("IN_CLOSE_NOWRITE: ");
-      else if(ptr->mask & IN_CLOSE_WRITE)
-        printf("IN_CLOSE_WRITE: ");
-      else
-        printf("OTHER_ACTION");
-
-      ptr->name[ptr->len - 1] = '\0';
-      printf("%s", ptr->name);
-
-
-      ptr++;
-    }
-  }*/
+  }
 }
 
 #endif	// ifdef __linux__

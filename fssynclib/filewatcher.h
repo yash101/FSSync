@@ -7,6 +7,13 @@
 
 namespace Watcher
 {
+  class Event
+  {
+  public:
+    std::string from;
+    std::string to;
+  };
+
   class FileWatcher
   {
   private:
@@ -22,7 +29,6 @@ namespace Watcher
     FileWatcher(std::string folder);
     FileWatcher();
 
-    void watch_();
     void watch();
   };
 }
