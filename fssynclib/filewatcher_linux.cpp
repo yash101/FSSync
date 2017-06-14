@@ -36,15 +36,17 @@ int Watcher::FileWatcher::initialize()
 #define WATCH_ATTR IN_ATTRIB | IN_CREATE | IN_DELETE | IN_DELETE_SELF | IN_MODIFY | IN_MOVE_SELF | IN_MOVE | IN_UNMOUNT | IN_EXCL_UNLINK
 
 #define ATTRIB_TO_STRING(attrib, str) \
-  if(attrib == IN_ATTRIB) str += " IN_ATTRIB ";\
-  if(attrib == IN_CREATE) str += " IN_CREATE ";\
-  if(attrib == IN_DELETE) str += " IN_DELETE ";\
-  if(attrib == IN_DELETE_SELF) str += " IN_DELETE_SELF ";\
-  if(attrib == IN_MODIFY) str += " IN_MODIFY ";\
-  if(attrib == IN_MOVE_SELF) str += " IN_MODIFY_SELF ";\
-  if(attrib == IN_MOVE) str += " IN_MODIFY ";\
-  if(attrib == IN_UNMOUNT) str += " IN_UNMOUND ";\
-  if(attrib == IN_EXCL_UNLINK) str += " IN_EXCL_UNLINK "
+  if(attrib & IN_ATTRIB) str += " IN_ATTRIB ";\
+  if(attrib & IN_CREATE) str += " IN_CREATE ";\
+  if(attrib & IN_DELETE) str += " IN_DELETE ";\
+  if(attrib & IN_DELETE_SELF) str += " IN_DELETE_SELF ";\
+  if(attrib & IN_MODIFY) str += " IN_MODIFY ";\
+  if(attrib & IN_MOVE_SELF) str += " IN_MOVE_SELF ";\
+  if(attrib & IN_MOVE) str += " IN_MOVE ";\
+  if(attrib & IN_MOVED_TO) str += " IN_MOVED_TO ";\
+  if((attrib & IN_MOVED_FROM) == IN_MOVED_FROM) str += " IN_MOVED_FROM ";\
+  if(attrib & IN_UNMOUNT) str += " IN_UNMOUND ";\
+  if(attrib & IN_EXCL_UNLINK) str += " IN_EXCL_UNLINK "
 
 int Watcher::FileWatcher::begin_watching()
 {
@@ -56,7 +58,7 @@ int Watcher::FileWatcher::begin_watching()
 
 #ifdef DEBUG
   printf("Adding directory, '%s'\n", folder.c_str());
-  #endif
+#endif
 
   if(item.wd < 0)
   {
@@ -130,14 +132,22 @@ static void prune(std::vector<Watcher::InotifyEvent>& events, decltype(Watcher::
   {
     std::string evt = "";
     ATTRIB_TO_STRING(it->second.front()->mask, evt);
-    printf("Processing events for: [%s] (wd=%d, loc=%s)\n", it->second.front()->name.c_str(), it->second.front()->wd, watching[it->second.front()->wd].location.c_str());
+    printf("Processing events for: [%s] (wd=%d, loc=%s/%s)\n", it->second.front()->name.c_str(), it->second.front()->wd, watching[it->second.front()->wd].location.c_str(), it->second.front()->name.c_str());
+#define evts it->second
+    for(size_t i = 0; i < evts.size(); i++)
+    {
+      std::string s = "";
+      ATTRIB_TO_STRING(evts[i]->mask, s);
+      printf("\tEvent: [%s], cookie: [%d], path: [%s]\n", s.c_str(), evts[i]->cookie, evts[i]->name.c_str());
+    }
+#undef evts
   }
 }
 
 void Watcher::FileWatcher::watch()
 {
   int dbg = 0;
-#define debug printf("REACHED %d (FILE: %s), (LINE: %d)", dbg, __FILE__, __LINE__)
+#define debug printf("REACHED %d (FILE: %s), (LINE: %d)\n", dbg, __FILE__, __LINE__)
 
   debug;
   char buffer[8192] __attribute__((aligned(__alignof__(struct inotify_event))));
@@ -172,8 +182,9 @@ void Watcher::FileWatcher::watch()
       evt.wd = event->wd;
       evt.name = std::string(event->name, (size_t) event->len);
       events.push_back(std::move(evt));
-      prune(events, setup.watching);
     }
+    prune(events, setup.watching);
+    events.clear();
   }
 }
 
