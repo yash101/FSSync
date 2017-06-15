@@ -5,13 +5,20 @@
 
 #include <string>
 
+#define WATCHER_CREATE_FILE 1
+#define WATCHER_DELETE_FILE 2
+#define WATCHER_CREATE_DIRECTORY 3
+#define WATCHER_DELETE_DIRECTORY 4
+#define FILE_MODIFIED 5
+
 namespace Watcher
 {
   class Event
   {
   public:
-    std::string from;
-    std::string to;
+    int action;
+    std::string a;
+    std::string b;
   };
 
   class FileWatcher

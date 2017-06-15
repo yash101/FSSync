@@ -75,6 +75,7 @@ int Watcher::FileWatcher::begin_watching()
 
 int Watcher::FileWatcher::add_directory(const char* directory)
 {
+  //Open the directory, `const char* directory`
   DIR* d;
   struct dirent* dir;
 
@@ -84,32 +85,48 @@ int Watcher::FileWatcher::add_directory(const char* directory)
   {
     while((dir = readdir(d)) != NULL)
     {
-      struct stat st;
-      stat(dir->d_name, &st);
-      if((strcmp(dir->d_name, ".")) && (strcmp(dir->d_name, "..")) && S_ISDIR(st.st_mode) != 0)
-      {
-#ifdef DEBUG
-        printf("Adding directory (INODE: %lu), '%s'\n", dir->d_ino, dir->d_name);
-#endif
+      //Full path to file/directory
+      std::string fpath = directory + std::string("/") + dir->d_name;
 
+      //Used to get file/folder information
+      struct stat st;
+      stat(fpath.c_str(), &st);
+
+      //If the file? is not named '.' or '..' and the file? is a directory
+      if(strcmp(fpath.c_str(), ".") && strcmp(fpath.c_str(), "..") && S_ISDIR(st.st_mode) != 0)
+      {
+
+        //Print debug information to the command line
+#ifdef DEBUG
+        printf("[INFO] [%d:%s]: Adding directory, INODE=%lu, name=%s, path=%s\n", __LINE__, __FILE__, dir->d_ino, dir->d_name, fpath.c_str());
+#endif
+        //Stores the watch information
         Watcher::WatchedItem item;
-        item.wd = inotify_add_watch(setup.inotify_file_descriptor, dir->d_name, WATCH_ATTR);
+        item.location = fpath;
+        item.wd = inotify_add_watch(setup.inotify_file_descriptor, fpath.c_str(), WATCH_ATTR);
 
         if(item.wd < 0)
         {
           int err = errno;
-          printf("[%s](%d) Failed to add directory (INODE: %lu), '%s'; skipping\n", strerror(err), err, dir->d_ino, dir->d_name);
+          printf("[ERROR] [%d:%s]: Failed creating inotify watch; ERRNO: [%d:%s]\n", __LINE__, __FILE__, err, strerror(err));
           continue;
         }
 
-        printf("Adding directory, '%s'\n", dir->d_name);
-        std::string dirname = directory;
-        dirname += '/';
-        dirname += dir->d_name;
-        item.location = dirname;
         setup.watching[item.wd] = item;
-        add_directory(dirname.c_str());
+
+#ifdef DEBUG
+        printf("[INFO] [%d:%s]: Successfully added directory, %s, to the inotify event queue\n", __LINE__, __FILE__, fpath.c_str());
+#endif
+
+        add_directory(fpath.c_str());
+
       }
+#ifdef DEBUG
+      else
+      {
+        printf("[INFO] [%d:%s]: Skipped adding: INODE=%lu, name=%s, path=%s because it is not a directory.\n", __LINE__, __FILE__, dir->d_ino, dir->d_name, fpath.c_str());
+      }
+#endif
     }
 
     closedir(d);
