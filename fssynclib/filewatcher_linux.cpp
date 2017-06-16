@@ -23,6 +23,8 @@ Description:
 #include <vector>
 #include <map>
 
+#include "coreutils.h"
+
 #define MAKE_BLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK)
 #define MAKE_UNBLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
 
@@ -56,14 +58,11 @@ int Watcher::FileWatcher::begin_watching()
   item.wd = inotify_add_watch(setup.inotify_file_descriptor, folder.c_str(), WATCH_ATTR);
   item.location = folder;
 
-#ifdef DEBUG
-  printf("Adding directory, '%s'\n", folder.c_str());
-#endif
-
+  INFO("Adding directory, '%s'", folder.c_str());
   if(item.wd < 0)
   {
     int err = errno;
-    printf("[%s](%d) Failed to add root directory, '%s'\n", strerror(err), err, folder.c_str());
+    ERROR("Failed to add root directory, '%s'", strerror(err), err, folder.c_str());
     return -1;
   }
 
@@ -93,13 +92,11 @@ int Watcher::FileWatcher::add_directory(const char* directory)
       stat(fpath.c_str(), &st);
 
       //If the file? is not named '.' or '..' and the file? is a directory
-      if(strcmp(fpath.c_str(), ".") && strcmp(fpath.c_str(), "..") && S_ISDIR(st.st_mode) != 0)
+      if(strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..") && S_ISDIR(st.st_mode) != 0)
       {
 
         //Print debug information to the command line
-#ifdef DEBUG
-        printf("[INFO] [%d:%s]: Adding directory, INODE=%lu, name=%s, path=%s\n", __LINE__, __FILE__, dir->d_ino, dir->d_name, fpath.c_str());
-#endif
+        INFO("Adding directory (inode: %lu; name: %s; path: %s)", dir->d_ino, dir->d_name, fpath.c_str());
         //Stores the watch information
         Watcher::WatchedItem item;
         item.location = fpath;
@@ -108,25 +105,21 @@ int Watcher::FileWatcher::add_directory(const char* directory)
         if(item.wd < 0)
         {
           int err = errno;
-          printf("[ERROR] [%d:%s]: Failed creating inotify watch; ERRNO: [%d:%s]\n", __LINE__, __FILE__, err, strerror(err));
+          ERROR("Failed to create inotify watch: errno=%d (%s)", err, strerror(err));
           continue;
         }
 
         setup.watching[item.wd] = item;
 
-#ifdef DEBUG
-        printf("[INFO] [%d:%s]: Successfully added directory, %s, to the inotify event queue\n", __LINE__, __FILE__, fpath.c_str());
-#endif
+        INFO("Successfully added directory to inotify event queue: %s", fpath.c_str());
 
         add_directory(fpath.c_str());
 
       }
-#ifdef DEBUG
       else
       {
-        printf("[INFO] [%d:%s]: Skipped adding: INODE=%lu, name=%s, path=%s because it is not a directory.\n", __LINE__, __FILE__, dir->d_ino, dir->d_name, fpath.c_str());
+        INFO("Skipped (inode: %lu; name: %s; path: %s) because not a directory", dir->d_ino, dir->d_name, fpath.c_str());
       }
-#endif
     }
 
     closedir(d);
@@ -138,25 +131,55 @@ int Watcher::FileWatcher::add_directory(const char* directory)
 
 static void prune(std::vector<Watcher::InotifyEvent>& events, decltype(Watcher::WatcherSetup::watching)& watching)
 {
-  //Map of pointers to each event
+  INFO("PRUNING");
+
+  //Create map of pointers to each event
   std::map<decltype(Watcher::InotifyEvent::cookie), std::vector<Watcher::InotifyEvent*> > mp;
   for(size_t i = 0; i < events.size(); i++)
   {
     mp[events[i].cookie].push_back(&events[i]);
   }
 
+  //Iterate through the map; the map should sort everything by its watch descriptor (wd)
   for(std::map<decltype(Watcher::InotifyEvent::cookie), std::vector<Watcher::InotifyEvent*> >::const_iterator it = mp.begin(); it != mp.end(); ++it)
   {
+
+    //ATTRIB_TO_STRING works on this; loads a string (const char*)
     std::string evt = "";
     ATTRIB_TO_STRING(it->second.front()->mask, evt);
-    printf("Processing events for: [%s] (wd=%d, loc=%s/%s)\n", it->second.front()->name.c_str(), it->second.front()->wd, watching[it->second.front()->wd].location.c_str(), it->second.front()->name.c_str());
+
+    //Debug
+    INFO("Processing events for: [%s] (wd=%d, loc=%s/%s)\n", it->second.front()->name.c_str(), it->second.front()->wd, watching[it->second.front()->wd].location.c_str(), it->second.front()->name.c_str());
+
+    //Save my fingers a bit please :)
 #define evts it->second
+
+    //Go through all the events for the watch descriptor
     for(size_t i = 0; i < evts.size(); i++)
     {
       std::string s = "";
       ATTRIB_TO_STRING(evts[i]->mask, s);
-      printf("\tEvent: [%s], cookie: [%d], path: [%s]\n", s.c_str(), evts[i]->cookie, evts[i]->name.c_str());
+      INFO("\tEvent: [%s], cookie: [%d], path: [%s]\n", s.c_str(), evts[i]->cookie, evts[i]->name.c_str());
     }
+
+
+    for(size_t i = 0; i < evts.size(); i++)
+    {
+      Watcher::Event e;
+      if(evts[i]->mask == IN_ATTRIB)
+      {
+        e.action = WATCHER_ATTRIBUTES_MODIFIED;
+        e.a = watching[evts.front()->wd].location + evts.front()->name;
+      }
+      else if(evts[i]->mask == IN_DELETE)
+      {
+        e.action = WATCHER_DELETED;
+        e.a = watching[evts.front()->wd].location + evts.front()->name;
+      }
+    }
+
+
+
 #undef evts
   }
 }
@@ -164,7 +187,7 @@ static void prune(std::vector<Watcher::InotifyEvent>& events, decltype(Watcher::
 void Watcher::FileWatcher::watch()
 {
   int dbg = 0;
-#define debug printf("REACHED %d (FILE: %s), (LINE: %d)\n", dbg, __FILE__, __LINE__)
+#define debug INFO("DEBUG: REACHED %d", dbg++)
 
   debug;
   char buffer[8192] __attribute__((aligned(__alignof__(struct inotify_event))));
