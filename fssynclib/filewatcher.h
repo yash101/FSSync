@@ -5,8 +5,10 @@
 
 #include <string>
 
-#define WATCHER_ATTRIBUTES_MODIFIED 1
-#define WATCHER_DELETED 2
+#define WATCHER_CREATED_DIRECTORY 1
+#define WATCHER_CREATED_NON_DIRECTORY 2
+#define WATCHER_ATTRIBUTES_MODIFIED 3
+#define WATCHER_DELETED 4
 
 namespace Watcher
 {
@@ -14,8 +16,8 @@ namespace Watcher
   {
   public:
     int action;
-    std::string a;
-    std::string b;
+    std::string path_a;
+    std::string path_b;
   };
 
   class FileWatcher
