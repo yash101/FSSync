@@ -62,6 +62,7 @@ Other Information:
 #define MAKE_UNBLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
 
 #define WATCH_ATTR IN_ATTRIB | IN_CREATE | IN_DELETE | IN_DELETE_SELF | IN_MODIFY | IN_MOVE_SELF | IN_MOVE | IN_UNMOUNT | IN_EXCL_UNLINK
+#define MAX_ADD_DIRECTORY_RECURSE_LENGTH 20
 
 #define ATTRIB_TO_STRING(attrib, str) \
   if(attrib & IN_ATTRIB) str += " IN_ATTRIB ";\
@@ -76,11 +77,16 @@ Other Information:
   if(attrib & IN_UNMOUNT) str += " IN_UNMOUND ";\
   if(attrib & IN_EXCL_UNLINK) str += " IN_EXCL_UNLINK "
 
+/*
+ * This adds the initial folder, 'this->folder' and its contents, recursively
+ */
+
 int Watcher::FileWatcher::begin_watching()
 {
   //If the file/folder we want to watch ends with '/' or '\', then pop that off; unnecessary and will cause problems
   if(folder.back() == '/' || folder.back() == '\\')
-    folder.pop_back();
+    if(!(folder == "/" || folder == "\\"))
+      folder.pop_back();
 
   //Holds the watch information
   Watcher::WatchedItem item;
@@ -99,41 +105,63 @@ int Watcher::FileWatcher::begin_watching()
   //Add this to the map of watches
   setup.watching[item.wd] = item;
 
+  add_directory_recurse_length = 1;
   //Add the contents of the directory
   add_directory(folder.c_str());
+  add_directory_recurse_length--;
   return 0;
 }
 
+/*
+ * Adds a directory to the watch map recursively
+ */
+
 int Watcher::FileWatcher::add_directory(const char* directory)
 {
-  //Open the directory, `const char* directory`
+#ifdef MAX_ADD_DIRECTORY_RECURSE_LENGTH
+  if(add_directory_recurse_length >= MAX_ADD_DIRECTORY_RECURSE_LENGTH)
+  {
+    ERROR("Too many recursive directories; current depth relative to root: %d", add_directory_recurse_length);
+    return -1;
+  }
+#endif
+  //Holds directory information
   DIR* d;
   struct dirent* dir;
 
+  //Open the directory
   d = opendir(directory);
 
+  //Check if the directory was opened successfully
   if(d)
   {
+    //Get each file/directory/etc. from the directory; store it into struct dirent* dir
     while((dir = readdir(d)) != NULL)
     {
       //Full path to file/directory
       std::string fpath = directory + std::string("/") + dir->d_name;
 
-      //Used to get file/folder information
+      //Get the file/directory/etc. information
       struct stat st;
-      stat(fpath.c_str(), &st);
+      lstat(fpath.c_str(), &st);
 
-      //If the file? is not named '.' or '..' and the file? is a directory
-      if(strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..") && S_ISDIR(st.st_mode) != 0)
+      //Check if struct stat st points to a directory and its name is not '.' or '..'
+      if((S_ISDIR(st.st_mode) != 0 || S_ISLNK(st.st_mode) != 0) && strcmp(dir->d_name, ".") && strcmp(dir->d_name, ".."))
       {
+        //Check if we have a link (and whether to allow link following)
+        if(!follow_links && S_ISLNK(st.st_mode) != 0)
+        {
+          INFO("Skipping link (inode: %lu; name: %s; path: %s", dir->d_ino, dir->d_name, fpath.c_str());
+          continue;
+        }
+        INFO("Adding (inode: %lu; name: %s; path: %s)", dir->d_ino, dir->d_name, fpath.c_str());
 
-        //Print debug information to the command line
-        INFO("Adding directory (inode: %lu; name: %s; path: %s)", dir->d_ino, dir->d_name, fpath.c_str());
         //Stores the watch information
         Watcher::WatchedItem item;
         item.location = fpath;
         item.wd = inotify_add_watch(setup.inotify_file_descriptor, fpath.c_str(), WATCH_ATTR);
 
+        //Check for errors
         if(item.wd < 0)
         {
           int err = errno;
@@ -141,131 +169,179 @@ int Watcher::FileWatcher::add_directory(const char* directory)
           continue;
         }
 
+        //Add the watched item to the map of watched item; the key is the watch descriptor (wd)
         setup.watching[item.wd] = item;
 
-        INFO("Successfully added directory to inotify event queue: %s", fpath.c_str());
+        INFO("Successfully added to inotify event queue: %s", fpath.c_str());
 
+        //Recurse into the directory, pointed by fpath
+        add_directory_recurse_length++;
         add_directory(fpath.c_str());
+        add_directory_recurse_length--;
 
       }
       else
       {
-        INFO("Skipped (inode: %lu; name: %s; path: %s) because not a directory", dir->d_ino, dir->d_name, fpath.c_str());
+        INFO("Skipped (inode: %lu; name: %s; path: %s) because not a directory or a link", dir->d_ino, dir->d_name, fpath.c_str());
       }
     }
 
+    //Free the resources
     closedir(d);
   }
-
+  else
+  {
+    ERROR("Could not open directory, %s", directory);
+  }
 
   return 0;
 }
 
+void Watcher::FileWatcher::process_events(std::vector<Watcher::InotifyEvent>& events)
+{
+  INFO("=============PROCESSING EVENTS==============");
+
+  Watcher::Event event;
+
+  if(events.size() == 0)
+
+  //Events with only one part
+  {
+    FATAL("Received 0 events; something's weird!");
+  }
+
+  else if(events.size() == 1)
+
+  {
+    INFO("Received 1 event");
+
+    //If a file or directory was created
+    if(events.front().mask & IN_CREATE)
+    {
+      //Add the directory
+      add_directory(std::string(setup.watching[events.front().wd].location + "/" + events.front().name).c_str());
+    }
+  }
+
+  else if(events.size() == 2)
+
+  {
+    INFO("Recieved 2 events");
+  }
+
+  else
+
+  {
+    ERROR("Received %d events!", events.size());
+  }
+}
+
 static void prune(std::vector<Watcher::InotifyEvent>& events, decltype(Watcher::WatcherSetup::watching)& watching, int inotify_fd)
 {
-  INFO("PRUNING");
+  INFO("Recieved %lu events", events.size());
+//  INFO("PRUNING");
 
-  //Create map of pointers to each event
-  std::map<decltype(Watcher::InotifyEvent::cookie), std::vector<Watcher::InotifyEvent*> > mp;
-  for(size_t i = 0; i < events.size(); i++)
-  {
-    mp[events[i].cookie].push_back(&events[i]);
-  }
+//Create map of pointers to each event
+//  std::map<decltype(Watcher::InotifyEvent::cookie), std::vector<Watcher::InotifyEvent*> > mp;
+//  for(size_t i = 0; i < events.size(); i++)
+//  {
+//    mp[events[i].cookie].push_back(&events[i]);
+//  }
 
-  //Iterate through the map; the map should sort everything by its watch descriptor (wd)
-  for(std::map<decltype(Watcher::InotifyEvent::cookie), std::vector<Watcher::InotifyEvent*> >::const_iterator it = mp.begin(); it != mp.end(); ++it)
-  {
+//  //Iterate through the map; the map should sort everything by its watch descriptor (wd)
+//  for(std::map<decltype(Watcher::InotifyEvent::cookie), std::vector<Watcher::InotifyEvent*> >::const_iterator it = mp.begin(); it != mp.end(); ++it)
+//  {
 
-    //ATTRIB_TO_STRING works on this; loads a string (const char*)
-    std::string evt = "";
-    ATTRIB_TO_STRING(it->second.front()->mask, evt);
+//    //ATTRIB_TO_STRING works on this; loads a string (const char*)
+//    std::string evt = "";
+//    ATTRIB_TO_STRING(it->second.front()->mask, evt);
 
-    //Debug
-    INFO("Processing events for: [%s] (wd=%d, loc=%s/%s)", it->second.front()->name.c_str(), it->second.front()->wd, watching[it->second.front()->wd].location.c_str(), it->second.front()->name.c_str());
+//    //Debug
+//    INFO("Processing events for: [%s] (wd=%d, loc=%s/%s)", it->second.front()->name.c_str(), it->second.front()->wd, watching[it->second.front()->wd].location.c_str(), it->second.front()->name.c_str());
 
-    //Save my fingers a bit please :)
-#define evts it->second
+//    //Save my fingers a bit please :)
+//#define evts it->second
 
-    if(evts.size() == 0)
-    {
-      continue;
-    }
+//    if(evts.size() == 0)
+//    {
+//      continue;
+//    }
 
-    //If only one event was received
-    else if(evts.size() == 1)
-    {
-      INFO("Recieved one event");
-      std::string s = "";
-      ATTRIB_TO_STRING(evts.front()->mask, s);
-      INFO("\tEvent: %s for name: '%s', cookie: %d (%x), mask: %d, wd: %d", s.c_str(), evts.front()->name.c_str(), evts.front()->cookie, evts.front()->cookie, evts.front()->mask, evts.front()->wd);
+//    //If only one event was received
+//    else if(evts.size() == 1)
+//    {
+//      INFO("Recieved one event");
+//      std::string s = "";
+//      ATTRIB_TO_STRING(evts.front()->mask, s);
+//      INFO("\tEvent: %s for name: '%s', cookie: %d (%x), mask: %d, wd: %d", s.c_str(), evts.front()->name.c_str(), evts.front()->cookie, evts.front()->cookie, evts.front()->mask, evts.front()->wd);
 
-      //File or directory (or etc.) was created
-      //If it is a directory, add it to the watch list
-      if(evts.front()->mask & IN_CREATE)
-      {
-        //Get the path to the new file
-        //	Use the path to the folder for which evts.front()->wd is defined
-        std::string path = watching[evts.front()->wd].location + std::string("/") + evts.front()->name;
+//      //File or directory (or etc.) was created
+//      //If it is a directory, add it to the watch list
+//      if(evts.front()->mask & IN_CREATE)
+//      {
+//        //Get the path to the new file
+//        //	Use the path to the folder for which evts.front()->wd is defined
+//        std::string path = watching[evts.front()->wd].location + std::string("/") + evts.front()->name;
 
-        //Check if file or directory
-        struct stat st;
-        stat(path.c_str(), &st);
+//        //Check if file or directory
+//        struct stat st;
+//        stat(path.c_str(), &st);
 
-        Watcher::Event e;
-        e.path_a = path;
+//        Watcher::Event e;
+//        e.path_a = path;
 
-        //Check if file or directory
-        if(S_ISDIR(st.st_mode) != 0)
-        {
-          INFO("Adding directory, %s; stat mode: %d", path.c_str(), st.st_mode);
-          Watcher::WatchedItem item;
-          item.location = path;
-          item.wd = inotify_add_watch(inotify_fd, path.c_str(), WATCH_ATTR);
+//        //Check if file or directory
+//        if(S_ISDIR(st.st_mode) != 0)
+//        {
+//          INFO("Adding directory, %s; stat mode: %d", path.c_str(), st.st_mode);
+//          Watcher::WatchedItem item;
+//          item.location = path;
+//          item.wd = inotify_add_watch(inotify_fd, path.c_str(), WATCH_ATTR);
 
-          if(item.wd < 0)
-          {
-            int err = errno;
-            ERROR("Failed adding directory, %s, because of error %d (%s)", path.c_str(), err, strerror(err));
-          }
+//          if(item.wd < 0)
+//          {
+//            int err = errno;
+//            ERROR("Failed adding directory, %s, because of error %d (%s)", path.c_str(), err, strerror(err));
+//          }
 
-          e.action = WATCHER_CREATED_DIRECTORY;
-        }
-        else
-        {
-          e.action = WATCHER_CREATED_NON_DIRECTORY;
-        }
-      }
-
-
-      else if(evts.front()->mask & IN_ATTRIB)
-      {
-      }
+//          e.action = WATCHER_CREATED_DIRECTORY;
+//        }
+//        else
+//        {
+//          e.action = WATCHER_CREATED_NON_DIRECTORY;
+//        }
+//      }
 
 
-    }
-    else if(evts.size() == 2)
-    {
-      INFO("Recieved two events");
-      for(size_t i = 0; i < evts.size(); i++)
-      {
-        std::string s = "";
-        ATTRIB_TO_STRING(evts[i]->mask, s);
-        INFO("\tEvent: %s for name: '%s', cookie: %d (%x), mask: %d, wd: %d", s, evts[i]->name, evts[i]->cookie, evts[i]->cookie, evts[i]->mask, evts[i]->wd);
-      }
-    }
-    else
-    {
-      ERROR("Recieved more than two events. Can't decide what to do.");
-      for(size_t i = 0; i < evts.size(); i++)
-      {
-        std::string s = "";
-        ATTRIB_TO_STRING(evts[i]->mask, s);
-        ERROR("\tEvent: %s for name: '%s', cookie: %d (%x), mask: %d, wd: %d", s, evts[i]->name, evts[i]->cookie, evts[i]->cookie, evts[i]->mask, evts[i]->wd);
-      }
-    }
+//      else if(evts.front()->mask & IN_ATTRIB)
+//      {
+//      }
 
-#undef evts
-  }
+
+//    }
+//    else if(evts.size() == 2)
+//    {
+//      INFO("Recieved two events");
+//      for(size_t i = 0; i < evts.size(); i++)
+//      {
+//        std::string s = "";
+//        ATTRIB_TO_STRING(evts[i]->mask, s);
+//        INFO("\tEvent: %s for name: '%s', cookie: %d (%x), mask: %d, wd: %d", s, evts[i]->name, evts[i]->cookie, evts[i]->cookie, evts[i]->mask, evts[i]->wd);
+//      }
+//    }
+//    else
+//    {
+//      ERROR("Recieved more than two events. Can't decide what to do.");
+//      for(size_t i = 0; i < evts.size(); i++)
+//      {
+//        std::string s = "";
+//        ATTRIB_TO_STRING(evts[i]->mask, s);
+//        ERROR("\tEvent: %s for name: '%s', cookie: %d (%x), mask: %d, wd: %d", s, evts[i]->name, evts[i]->cookie, evts[i]->cookie, evts[i]->mask, evts[i]->wd);
+//      }
+//    }
+
+//#undef evts
+//  }
 }
 
 void Watcher::FileWatcher::watch()
@@ -307,7 +383,8 @@ void Watcher::FileWatcher::watch()
       evt.name = std::string(event->name, (size_t) event->len);
       events.push_back(std::move(evt));
     }
-    prune(events, setup.watching, setup.inotify_file_descriptor);
+//    prune(events, setup.watching, setup.inotify_file_descriptor);
+    process_events(events);
     events.clear();
   }
 }

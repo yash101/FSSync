@@ -6,11 +6,13 @@
 #include <string>
 #endif
 
+#define DISABLE_INFO
+
 #ifdef DEBUG
-#define INFO(fmt, args ...)  printf(("[ INFO] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
-#define WARN(fmt, args ...) printf(("[ WARN] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
-#define ERROR(fmt, args ...) printf(("[ERROR] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
-#define FATAL(fmt, args ...) printf(("[FATAL] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
+#define INFO(fmt, args ...)  printf(("\033[22;32m[ INFO] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
+#define WARN(fmt, args ...) printf(("\033[01;31m[ WARN] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
+#define ERROR(fmt, args ...) printf(("\033[22;31m[ERROR] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
+#define FATAL(fmt, args ...) printf(("\033[22;31m[FATAL] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
 #else
 #define INFO(fmt, args ...) {}
 #define WARN(fmt, args ...) {}
@@ -18,5 +20,8 @@
 #define FATAL(fmt, args ...) {}
 #endif
 
+#ifdef DISABLE_INFO
+#define INFO(fmt, args ...) {}
+#endif
 
 #endif // COREUTILS_H

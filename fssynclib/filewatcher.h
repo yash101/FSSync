@@ -4,6 +4,7 @@
 #include "filewatcher_linux.h"
 
 #include <string>
+#include <vector>
 
 namespace Watcher
 {
@@ -39,13 +40,15 @@ namespace Watcher
   private:
     WatcherSetup setup;
     std::string folder;
+    bool follow_links;
+    int add_directory_recurse_length;
 
     int initialize();
     int begin_watching();
 
     int add_directory(const char* directory);
 
-    bool follow_links;
+    void process_events(std::vector<Watcher::InotifyEvent>& events);
 
   public:
     FileWatcher(std::string folder, bool follow_links);
