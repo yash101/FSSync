@@ -6,34 +6,60 @@ Description:
     Linux implementation of file system watching. Uses inotify for speed and efficiency.
     If a file or directory is added or changed, a notification will be sent. Otherwise,
     would have to poll to detect changes
+Other Information:
+    This file is written for the Linux operating system; it uses inotify for most of its core.
 
 */
 
 #ifdef __linux__
+
+/*
+ * Includes required to make this source file's code tick...
+ *
+ * Project Includes
+ *   "filewatcher.h" - contains the Watcher::FileWatcher class as well as global API for file
+ * 	   watching.
+ *   "coreutils.h" - core utilities
+ *
+ * System API Includes
+ *   <sys/inotify.h> - contains needed structures and functions to use inotify for high-efficiency
+ * 	   file watching
+ *   <sys/stat.h> - helps getting file and directory information
+ *   <unistd.h> - many useful POSIX and Linux structures, functions and definitions, etc.
+ *   <fcndl.h> - file descriptor modification functions
+ *   <dirent.h> - browsing through directories and accessing BASIC information
+ *
+ * C & C++ Standard Library Includes
+ *   <string.h> - c-string manipulation functions
+ * 	 <stdio.h> - printf, etc.
+ *   <vector> - resizeable arrays
+ *   <map> - map data structure; allows searching for an object by a key
+ */
+
 #include "filewatcher.h"
 #include <sys/inotify.h>
 #include <sys/stat.h>
-#include <sys/select.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <dirent.h>
 
 #include <string.h>
-#include <dirent.h>
 #include <stdio.h>
 #include <vector>
 #include <map>
 
 #include "coreutils.h"
 
+/*
+ * Random handy macros
+ * MAKE_BLOCK: makes a file descriptor blocking
+ * MAKE_UNBLOCK: makes a file descriptor unblocking
+ * WATCH_ATTR: the attributes being used in the file watching
+ * ATTRIB_TO_STRING: prints in a nice way, which flags are set in a mask; useful for debugging
+ */
+
 #define MAKE_BLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK)
 #define MAKE_UNBLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
-
-int Watcher::FileWatcher::initialize()
-{
-  setup.inotify_file_descriptor = inotify_init();
-  MAKE_BLOCK(setup.inotify_file_descriptor);
-  return 0;
-}
 
 #define WATCH_ATTR IN_ATTRIB | IN_CREATE | IN_DELETE | IN_DELETE_SELF | IN_MODIFY | IN_MOVE_SELF | IN_MOVE | IN_UNMOUNT | IN_EXCL_UNLINK
 
@@ -52,22 +78,28 @@ int Watcher::FileWatcher::initialize()
 
 int Watcher::FileWatcher::begin_watching()
 {
+  //If the file/folder we want to watch ends with '/' or '\', then pop that off; unnecessary and will cause problems
   if(folder.back() == '/' || folder.back() == '\\')
     folder.pop_back();
+
+  //Holds the watch information
   Watcher::WatchedItem item;
   item.wd = inotify_add_watch(setup.inotify_file_descriptor, folder.c_str(), WATCH_ATTR);
   item.location = folder;
 
-  INFO("Adding directory, '%s'", folder.c_str());
+  //Check for errors
   if(item.wd < 0)
   {
     int err = errno;
     ERROR("Failed to add root directory, '%s'", strerror(err), err, folder.c_str());
     return -1;
   }
+  INFO("Added file or directory, '%s'", folder.c_str());
 
+  //Add this to the map of watches
   setup.watching[item.wd] = item;
 
+  //Add the contents of the directory
   add_directory(folder.c_str());
   return 0;
 }
@@ -280,4 +312,10 @@ void Watcher::FileWatcher::watch()
   }
 }
 
+int Watcher::FileWatcher::initialize()
+{
+  setup.inotify_file_descriptor = inotify_init();
+  MAKE_BLOCK(setup.inotify_file_descriptor);
+  return 0;
+}
 #endif	// ifdef __linux__

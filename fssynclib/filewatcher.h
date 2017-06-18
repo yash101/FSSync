@@ -30,7 +30,7 @@ namespace Watcher
       static const ActionType CREATED = 101;
       static const ActionType DELETED = 102;
       static const ActionType MODIFIED = 103;
-      static const ActionType ATTRIBUTES_MODIFIED = 5;
+      static const ActionType ATTRIBUTES_MODIFIED = 104;
     };
   };
 
@@ -45,8 +45,10 @@ namespace Watcher
 
     int add_directory(const char* directory);
 
+    bool follow_links;
+
   public:
-    FileWatcher(std::string folder);
+    FileWatcher(std::string folder, bool follow_links);
     FileWatcher();
 
     void watch();
