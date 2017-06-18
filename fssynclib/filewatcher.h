@@ -5,19 +5,33 @@
 
 #include <string>
 
-#define WATCHER_CREATED_DIRECTORY 1
-#define WATCHER_CREATED_NON_DIRECTORY 2
-#define WATCHER_ATTRIBUTES_MODIFIED 3
-#define WATCHER_DELETED 4
-
 namespace Watcher
 {
+  typedef int ActionType;
   class Event
   {
   public:
-    int action;
+    ActionType action;
     std::string path_a;
     std::string path_b;
+
+    class FileActions
+    {
+    public:
+      static const ActionType CREATED = 1;
+      static const ActionType DELETED = 2;
+      static const ActionType MODIFIED = 3;
+      static const ActionType ATTRIBUTES_MODIFIED = 4;
+    };
+
+    class DirectoryActions
+    {
+    public:
+      static const ActionType CREATED = 101;
+      static const ActionType DELETED = 102;
+      static const ActionType MODIFIED = 103;
+      static const ActionType ATTRIBUTES_MODIFIED = 5;
+    };
   };
 
   class FileWatcher
