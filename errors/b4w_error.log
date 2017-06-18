@@ -1,0 +1,283 @@
+[ INFO] (103:../fssynclib/filewatcher_linux.cpp): Added file or directory, '/'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 41376821576467022; name: .; path: //.) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 41376821576467022; name: ..; path: //..) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 2533274790396642; name: bin; path: //bin)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396642; name: .; path: //bin/.) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396642; name: ..; path: //bin/..) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 7881299348060261; name: bash; path: //bin/bash) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3377699720528877; name: btrfs; path: //bin/btrfs) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107621; name: btrfs-calc-size; path: //bin/btrfs-calc-size) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3377699720528907; name: btrfs-convert; path: //bin/btrfs-convert) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 7318349394477842; name: btrfs-debug-tree; path: //bin/btrfs-debug-tree) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686182; name: btrfs-find-root; path: //bin/btrfs-find-root) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 8444249301320558; name: btrfs-image; path: //bin/btrfs-image) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4785074604082144; name: btrfs-map-logical; path: //bin/btrfs-map-logical) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264891; name: btrfs-select-super; path: //bin/btrfs-select-super) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107614; name: btrfs-show-super; path: //bin/btrfs-show-super) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4222124650660905; name: btrfs-zero-log; path: //bin/btrfs-zero-log) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 1407374883554409; name: btrfsck; path: //bin/btrfsck)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/btrfsck
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/btrfsck
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860265026; name: btrfstune; path: //bin/btrfstune) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107582; name: bunzip2; path: //bin/bunzip2) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264752; name: busybox; path: //bin/busybox) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107582; name: bzcat; path: //bin/bzcat) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 1970324836975588; name: bzcmp; path: //bin/bzcmp)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/bzcmp
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/bzcmp
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264759; name: bzdiff; path: //bin/bzdiff) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 9288674231452432; name: bzegrep; path: //bin/bzegrep)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/bzegrep
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/bzegrep
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554405; name: bzexe; path: //bin/bzexe) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 5066549580792597; name: bzfgrep; path: //bin/bzfgrep)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/bzfgrep
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/bzfgrep
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818249; name: bzgrep; path: //bin/bzgrep) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107582; name: bzip2; path: //bin/bzip2) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686093; name: bzip2recover; path: //bin/bzip2recover) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 3377699720528939; name: bzless; path: //bin/bzless)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/bzless
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/bzless
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860265002; name: bzmore; path: //bin/bzmore) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818210; name: cat; path: //bin/cat) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975431; name: chacl; path: //bin/chacl) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975411; name: chgrp; path: //bin/chgrp) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686130; name: chmod; path: //bin/chmod) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3940649673950185; name: chown; path: //bin/chown) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975490; name: chvt; path: //bin/chvt) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 5629499534214217; name: cp; path: //bin/cp) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686337; name: cpio; path: //bin/cpio) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264898; name: dash; path: //bin/dash) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975662; name: date; path: //bin/date) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 8444249301320471; name: dd; path: //bin/dd) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 17732923532772182; name: df; path: //bin/df) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264885; name: dir; path: //bin/dir) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818111; name: dmesg; path: //bin/dmesg) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 8725724278031417; name: dnsdomainname; path: //bin/dnsdomainname)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/dnsdomainname
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/dnsdomainname
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 18014398509482865; name: domainname; path: //bin/domainname)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/domainname
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/domainname
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818226; name: dumpkeys; path: //bin/dumpkeys) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107624; name: echo; path: //bin/echo) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 5348024557503524; name: ed; path: //bin/ed) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264753; name: egrep; path: //bin/egrep) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 10977524091716615; name: false; path: //bin/false) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4222124650660837; name: fgconsole; path: //bin/fgconsole) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 10133099161584715; name: fgrep; path: //bin/fgrep) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975536; name: findmnt; path: //bin/findmnt) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396835; name: fsck.btrfs; path: //bin/fsck.btrfs) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 8162774324609816; name: fuser; path: //bin/fuser) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686332; name: fusermount; path: //bin/fusermount) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860265063; name: getfacl; path: //bin/getfacl) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 9288674231452448; name: grep; path: //bin/grep) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264766; name: gunzip; path: //bin/gunzip) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107648; name: gzexe; path: //bin/gzexe) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686136; name: gzip; path: //bin/gzip) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686298; name: hostname; path: //bin/hostname) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790411076; name: ip; path: //bin/ip) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836990356; name: journalctl; path: //bin/journalctl) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 7599824371188808; name: kbd_mode; path: //bin/kbd_mode) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 9288674231452508; name: kill; path: //bin/kill) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3659174697239644; name: kmod; path: //bin/kmod) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4222124650660876; name: less; path: //bin/less) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396800; name: lessecho; path: //bin/lessecho) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 3940649673950168; name: lessfile; path: //bin/lessfile)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/lessfile
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/lessfile
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554406; name: lesskey; path: //bin/lesskey) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107563; name: lesspipe; path: //bin/lesspipe) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686193; name: ln; path: //bin/ln) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554408; name: loadkeys; path: //bin/loadkeys) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813720321; name: login; path: //bin/login) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767122059; name: loginctl; path: //bin/loginctl) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396798; name: lowntfs-3g; path: //bin/lowntfs-3g) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3377699720528989; name: ls; path: //bin/ls) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264794; name: lsblk; path: //bin/lsblk) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 2533274790396950; name: lsmod; path: //bin/lsmod)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/lsmod
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/lsmod
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 5066549580792845; name: mkdir; path: //bin/mkdir) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396706; name: mkfs.btrfs; path: //bin/mkfs.btrfs) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 11258999068427045; name: mknod; path: //bin/mknod) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818164; name: mktemp; path: //bin/mktemp) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 5348024557503568; name: more; path: //bin/more) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686293; name: mount; path: //bin/mount) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4222124650660634; name: mountpoint; path: //bin/mountpoint) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 3096224743818275; name: mt; path: //bin/mt)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/mt
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/mt
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396755; name: mt-gnu; path: //bin/mt-gnu) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264837; name: mv; path: //bin/mv) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107581; name: nano; path: //bin/nano) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 1970324836975654; name: nc; path: //bin/nc)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/nc
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/nc
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554412; name: nc.openbsd; path: //bin/nc.openbsd) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 2251799813686355; name: netcat; path: //bin/netcat)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/netcat
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/netcat
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4503599627371309; name: netstat; path: //bin/netstat) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3940649673965544; name: networkctl; path: //bin/networkctl) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 2533274790396951; name: nisdomainname; path: //bin/nisdomainname)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/nisdomainname
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/nisdomainname
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264892; name: ntfs-3g; path: //bin/ntfs-3g) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975655; name: ntfs-3g.probe; path: //bin/ntfs-3g.probe) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554410; name: ntfs-3g.secaudit; path: //bin/ntfs-3g.secaudit) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264757; name: ntfs-3g.usermap; path: //bin/ntfs-3g.usermap) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686291; name: ntfscat; path: //bin/ntfscat) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818059; name: ntfscluster; path: //bin/ntfscluster) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975444; name: ntfscmp; path: //bin/ntfscmp) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264896; name: ntfsfallocate; path: //bin/ntfsfallocate) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686139; name: ntfsfix; path: //bin/ntfsfix) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975449; name: ntfsinfo; path: //bin/ntfsinfo) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686094; name: ntfsls; path: //bin/ntfsls) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686191; name: ntfsmove; path: //bin/ntfsmove) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686334; name: ntfstruncate; path: //bin/ntfstruncate) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818012; name: ntfswipe; path: //bin/ntfswipe) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 1970324836975442; name: open; path: //bin/open)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/open
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/open
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860265027; name: openvt; path: //bin/openvt) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 3377699720528914; name: pidof; path: //bin/pidof)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/pidof
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/pidof
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975529; name: ping; path: //bin/ping) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396751; name: ping6; path: //bin/ping6) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3659174697239566; name: plymouth; path: //bin/plymouth) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975451; name: ps; path: //bin/ps) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3940649673949998; name: pwd; path: //bin/pwd) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 15199648742537322; name: rbash; path: //bin/rbash)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/rbash
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/rbash
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 6755399441056850; name: readlink; path: //bin/readlink) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860265028; name: red; path: //bin/red) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396987; name: rm; path: //bin/rm) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107560; name: rmdir; path: //bin/rmdir) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 5629499534213927; name: rnano; path: //bin/rnano)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/rnano
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/rnano
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 7599824371188836; name: run-parts; path: //bin/run-parts) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743817957; name: sed; path: //bin/sed) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686327; name: setfacl; path: //bin/setfacl) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264890; name: setfont; path: //bin/setfont) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396752; name: setupcon; path: //bin/setupcon) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 3940649673950039; name: sh; path: //bin/sh)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/sh
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/sh
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 2251799813686328; name: sh.distrib; path: //bin/sh.distrib)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/sh.distrib
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/sh.distrib
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3940649673950182; name: sleep; path: //bin/sleep) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790411075; name: ss; path: //bin/ss) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 2251799813686038; name: static-sh; path: //bin/static-sh)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/static-sh
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/static-sh
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818260; name: stty; path: //bin/stty) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790430909; name: su; path: //bin/su) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 84442493013197699; name: sync; path: //bin/sync) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790412269; name: systemctl; path: //bin/systemctl) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 1688849860459762; name: systemd; path: //bin/systemd)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/systemd
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/systemd
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813701210; name: systemd-ask-password; path: //bin/systemd-ask-password) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813700885; name: systemd-escape; path: //bin/systemd-escape) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813688819; name: systemd-hwdb; path: //bin/systemd-hwdb) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813701319; name: systemd-inhibit; path: //bin/systemd-inhibit) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813701609; name: systemd-machine-id-setup; path: //bin/systemd-machine-id-setup) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836990865; name: systemd-notify; path: //bin/systemd-notify) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767122918; name: systemd-tmpfiles; path: //bin/systemd-tmpfiles) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813701611; name: systemd-tty-ask-password-agent; path: //bin/systemd-tty-ask-password-agent) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264792; name: tailf; path: //bin/tailf) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396784; name: tar; path: //bin/tar) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3659174697239626; name: tempfile; path: //bin/tempfile) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554413; name: touch; path: //bin/touch) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818229; name: true; path: //bin/true) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 17732923532774902; name: udevadm; path: //bin/udevadm) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264767; name: ulockmgr_server; path: //bin/ulockmgr_server) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 9570149208163338; name: umount; path: //bin/umount) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975464; name: uname; path: //bin/uname) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264766; name: uncompress; path: //bin/uncompress) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975624; name: unicode_start; path: //bin/unicode_start) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264758; name: vdir; path: //bin/vdir) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107439; name: wdctl; path: //bin/wdctl) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4785074604081945; name: which; path: //bin/which) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975610; name: whiptail; path: //bin/whiptail) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 3940649673949987; name: ypdomainname; path: //bin/ypdomainname)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //bin/ypdomainname
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //bin/ypdomainname
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//bin'
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264889; name: zcat; path: //bin/zcat) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818013; name: zcmp; path: //bin/zcmp) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2814749767107584; name: zdiff; path: //bin/zdiff) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 18858823439614885; name: zegrep; path: //bin/zegrep) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 3096224743818215; name: zfgrep; path: //bin/zfgrep) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2533274790396794; name: zforce; path: //bin/zforce) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686132; name: zgrep; path: //bin/zgrep) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975640; name: zless; path: //bin/zless) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 2251799813686137; name: zmore; path: //bin/zmore) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1688849860264882; name: znew; path: //bin/znew) because not a directory or a link
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '/'
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 1407374883554414; name: boot; path: //boot)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //boot
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554414; name: .; path: //boot/.) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554414; name: ..; path: //boot/..) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 1407374883554415; name: grub; path: //boot/grub)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //boot/grub
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554415; name: .; path: //boot/grub/.) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554415; name: ..; path: //boot/grub/..) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 6473924464346224; name: default; path: //boot/grub/default) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554421; name: grub.cfg; path: //boot/grub/grub.cfg) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554419; name: menu.lst; path: //boot/grub/menu.lst) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554420; name: menu.lst_backup_by_grub2_prerm; path: //boot/grub/menu.lst_backup_by_grub2_prerm) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1407374883554418; name: menu.lst~; path: //boot/grub/menu.lst~) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 1970324836975729; name: unicode.pf2; path: //boot/grub/unicode.pf2) because not a directory or a link
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//boot'
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '/'
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 18014398509521597; name: cache; path: //cache)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //cache
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //cache
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '/'
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 25614222880709263; name: data; path: //data)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //data
+[ERROR] (196:../fssynclib/filewatcher_linux.cpp): Could not open directory, //data
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '/'
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 1407374883554422; name: dev; path: //dev)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //dev
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4503599627382222; name: .; path: //dev/.) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 4503599627382222; name: ..; path: //dev/..) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 196751008720766483; name: block; path: //dev/block)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //dev/block
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 196751008720766483; name: .; path: //dev/block/.) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 196751008720766483; name: ..; path: //dev/block/..) because not a directory or a link
+[ INFO] (182:../fssynclib/filewatcher_linux.cpp): Back to directory, '//dev'
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 36028797018982163; name: fd; path: //dev/fd)
+[ INFO] (175:../fssynclib/filewatcher_linux.cpp): Successfully added to inotify event queue: //dev/fd
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 672; name: .; path: //dev/fd/.) because not a directory or a link
+[ INFO] (187:../fssynclib/filewatcher_linux.cpp): Skipped (inode: 672; name: ..; path: //dev/fd/..) because not a directory or a link
+[ INFO] (157:../fssynclib/filewatcher_linux.cpp): Adding (inode: 692; name: 0; path: //dev/fd/0)
