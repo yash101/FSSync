@@ -179,6 +179,8 @@ int Watcher::FileWatcher::add_directory(const char* directory)
         add_directory(fpath.c_str());
         add_directory_recurse_length--;
 
+        INFO("Back to directory, '%s'", directory);
+
       }
       else
       {
@@ -233,6 +235,13 @@ void Watcher::FileWatcher::process_events(std::vector<Watcher::InotifyEvent>& ev
 
   {
     ERROR("Received %d events!", events.size());
+    printf("Received %lu events!\n", events.size());
+    for(size_t i = 0; i < events.size(); i++)
+    {
+      std::string evt;
+      ATTRIB_TO_STRING(events[i].mask, evt);
+      printf("\tEvent: cookie=%d, mask=%d, wd=%d, events=%s, name=%s\n", events[i].cookie, events[i].mask, events[i].wd, evt.c_str(), events[i].name.c_str());
+    }
   }
 }
 

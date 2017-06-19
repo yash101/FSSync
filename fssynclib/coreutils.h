@@ -6,7 +6,7 @@
 #include <string>
 #endif
 
-#define DISABLE_INFO
+//#define DISABLE_INFO
 
 #ifdef DEBUG
 #define INFO(fmt, args ...)  printf(("\033[22;32m[ INFO] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
