@@ -50,6 +50,8 @@ Other Information:
 
 #include "coreutils.h"
 
+#define INFO {}
+
 /*
  * Random handy macros
  * MAKE_BLOCK: makes a file descriptor blocking
@@ -201,47 +203,15 @@ int Watcher::FileWatcher::add_directory(const char* directory)
 
 void Watcher::FileWatcher::process_events(std::vector<Watcher::InotifyEvent>& events)
 {
-  INFO("=============PROCESSING EVENTS==============");
+  WARN("=============PROCESSING EVENTS==============");
 
-  Watcher::Event event;
-
-  if(events.size() == 0)
-
-  //Events with only one part
+  WARN("Received \033[22;31m%lu\e[39m events", events.size());
+  for(size_t i = 0; i < events.size(); i++)
   {
-    FATAL("Received 0 events; something's weird!");
-  }
-
-  else if(events.size() == 1)
-
-  {
-    INFO("Received 1 event");
-
-    //If a file or directory was created
-    if(events.front().mask & IN_CREATE)
-    {
-      //Add the directory
-      add_directory(std::string(setup.watching[events.front().wd].location + "/" + events.front().name).c_str());
-    }
-  }
-
-  else if(events.size() == 2)
-
-  {
-    INFO("Recieved 2 events");
-  }
-
-  else
-
-  {
-    ERROR("Received %d events!", events.size());
-    printf("Received %lu events!\n", events.size());
-    for(size_t i = 0; i < events.size(); i++)
-    {
-      std::string evt;
-      ATTRIB_TO_STRING(events[i].mask, evt);
-      printf("\tEvent: cookie=%d, mask=%d, wd=%d, events=%s, name=%s\n", events[i].cookie, events[i].mask, events[i].wd, evt.c_str(), events[i].name.c_str());
-    }
+    std::string s;
+    ATTRIB_TO_STRING(events[i].mask, s);
+    const char* path = setup.watching[events[i].wd].location.c_str();
+    WARN("\tEvent: %s/%s; cookie: %d; mask: %d; events:%s; wd: %d", path, events[i].name.c_str(), events[i].cookie, events[i].mask, s.c_str(), events[i].wd);
   }
 }
 

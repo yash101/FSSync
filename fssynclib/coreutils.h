@@ -9,10 +9,10 @@
 //#define DISABLE_INFO
 
 #ifdef DEBUG
-#define INFO(fmt, args ...)  printf(("\033[22;32m[ INFO] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
-#define WARN(fmt, args ...) printf(("\033[01;31m[ WARN] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
-#define ERROR(fmt, args ...) printf(("\033[22;31m[ERROR] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
-#define FATAL(fmt, args ...) printf(("\033[22;31m[FATAL] (%d:%s): " + std::string(fmt) + "\n").c_str(), __LINE__, __FILE__, ## args)
+#define INFO(fmt, args ...)  printf(("\033[22;32m[ INFO] (%d:%s): " + std::string(fmt) + "\e[39m\n").c_str(), __LINE__, __FILE__, ## args)
+#define WARN(fmt, args ...) printf(("\033[01;31m[ WARN] (%d:%s): " + std::string(fmt) + "\e[39m\n").c_str(), __LINE__, __FILE__, ## args)
+#define ERROR(fmt, args ...) printf(("\033[22;31m[ERROR] (%d:%s): " + std::string(fmt) + "\e[39m\n").c_str(), __LINE__, __FILE__, ## args)
+#define FATAL(fmt, args ...) printf(("\033[22;31m[FATAL] (%d:%s): " + std::string(fmt) + "\e[39m\n").c_str(), __LINE__, __FILE__, ## args)
 #else
 #define INFO(fmt, args ...) {}
 #define WARN(fmt, args ...) {}
