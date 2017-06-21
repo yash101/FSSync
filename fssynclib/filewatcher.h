@@ -19,19 +19,19 @@ namespace Watcher
     class FileActions
     {
     public:
-      static const ActionType CREATED = 1;
-      static const ActionType DELETED = 2;
-      static const ActionType MODIFIED = 3;
-      static const ActionType ATTRIBUTES_MODIFIED = 4;
+      static const ActionType CREATED = 1 << 1;
+      static const ActionType DELETED = 1 << 2;
+      static const ActionType MODIFIED = 1 << 3;
+      static const ActionType ATTRIBUTES_MODIFIED = 1 << 4;
     };
 
     class DirectoryActions
     {
     public:
-      static const ActionType CREATED = 101;
-      static const ActionType DELETED = 102;
-      static const ActionType MODIFIED = 103;
-      static const ActionType ATTRIBUTES_MODIFIED = 104;
+      static const ActionType CREATED = 1 << 5;
+      static const ActionType DELETED = 1 << 6;
+      static const ActionType MODIFIED = 1 << 7;
+      static const ActionType ATTRIBUTES_MODIFIED = 1 << 8;
     };
   };
 

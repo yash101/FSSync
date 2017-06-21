@@ -153,8 +153,17 @@ int Watcher::FileWatcher::add_directory(const char* directory)
         //Check if we have a link (and whether to allow link following)
         if(!follow_links && S_ISLNK(st.st_mode) != 0)
         {
-          INFO("Skipping link (inode: %lu; name: %s; path: %s", dir->d_ino, dir->d_name, fpath.c_str());
+          INFO("Skipping link (inode: %lu; name: %s; path: %s)", dir->d_ino, dir->d_name, fpath.c_str());
           continue;
+        }
+        else
+        {
+          struct stat st2;
+          stat(fpath.c_str(), &st2);
+          if(S_ISDIR(st2.st_mode) == 0)
+          {
+            INFO("Skipping link to non-directory (inode: %lu; name: %s; path: %s)", dir->d_ino, dir->d_name, fpath.c_str());
+          }
         }
         INFO("Adding (inode: %lu; name: %s; path: %s)", dir->d_ino, dir->d_name, fpath.c_str());
 
@@ -186,7 +195,7 @@ int Watcher::FileWatcher::add_directory(const char* directory)
       }
       else
       {
-        INFO("Skipped (inode: %lu; name: %s; path: %s) because not a directory or a link", dir->d_ino, dir->d_name, fpath.c_str());
+        INFO("Skipped (inode: %lu; name: %s; path: %s)", dir->d_ino, dir->d_name, fpath.c_str());
       }
     }
 
@@ -204,6 +213,8 @@ int Watcher::FileWatcher::add_directory(const char* directory)
 void Watcher::FileWatcher::process_events(std::vector<Watcher::InotifyEvent>& events)
 {
   WARN("=============PROCESSING EVENTS==============");
+  std::map<std::string, std::vector<Watcher::ActionType> > singletons;
+  std::map<decltype(events.front().cookie), Watcher::Event> nonsingle;
 
   WARN("Received \033[22;31m%lu\e[39m events", events.size());
   for(size_t i = 0; i < events.size(); i++)
@@ -213,14 +224,90 @@ void Watcher::FileWatcher::process_events(std::vector<Watcher::InotifyEvent>& ev
     const char* path = setup.watching[events[i].wd].location.c_str();
     WARN("\tEvent: %s/%s; cookie: %d; mask: %d; events:%s; wd: %d", path, events[i].name.c_str(), events[i].cookie, events[i].mask, s.c_str(), events[i].wd);
   }
+
+  for(size_t i = 0; i < events.size(); i++)
+  {
+    std::string path = setup.watching[events[i].wd].location + "/" + events[i].name;
+    struct stat st;
+    lstat(path.c_str(), &st);
+
+    if(events[i].mask & IN_CREATE)
+    {
+      //If it is a directory, or a link (if allowed)
+      if(S_ISDIR(st.st_mode) != 0 || (follow_links && S_ISLNK(st.st_mode) != 0))
+      {
+        singletons[path] |= Watcher::Event::DirectoryActions::CREATED;
+        Watcher::WatchedItem item;
+        item.location = path;
+        item.wd = inotify_add_watch(setup.inotify_file_descriptor, path.c_str(), WATCH_ATTR);
+
+        if(item.wd < 0)
+        {
+          int err = errno;
+          ERROR("Failed to create inotify watch: errno=%d (%s)", err, strerror(err));
+          continue;
+        }
+      }
+      //If a regular file
+      else if(S_ISREG(st.st_mode) != 0)
+      {
+        singletons[path] |= Watcher::Event::FileActions::CREATED;
+      }
+      //Otherwise...
+      else
+      {
+        INFO("Skipping %s because not a file or directory (or link if allowed)", path.c_str());
+      }
+    }
+
+    if(events[i].mask & IN_MODIFY)
+    {
+      //If it is a directory, or a link (if allowed)
+      if(S_ISDIR(st.st_mode) != 0 || (follow_links && S_ISLNK(st.st_mode) != 0))
+      {
+        singletons[path] |= Watcher::Event::DirectoryActions::CREATED;
+      }
+      //Otherwise...
+      else if(S_ISREG(st.st_mode) != 0)
+      {
+        singletons[path] |= Watcher::Event::FileActions::CREATED;
+      }
+      //Otherwise
+      else
+      {
+        INFO("Skipping %s because not a file or directory (or link if allowed)", path.c_str());
+      }
+    }
+
+    if(events[i].mask & IN_DELETE)
+    {
+      //If it is a directory, or a link (if allowed)
+      if(S_ISDIR(st.st_mode) != 0 || (follow_links && S_ISLNK(st.st_mode) != 0))
+      {
+        singletons[path] |= Watcher::Event::DirectoryActions::DELETED;
+      }
+      else if(S_ISREG(st.st_mode) != 0)
+      {
+        singletons[path] |= Watcher::Event::FileActions::DELETED;
+      }
+      else
+      {
+        INFO("Skipping %s because not a file or directory (or link if allowed)", path.c_str());
+      }
+    }
+
+    if(events[i].mask & IN_ATTRIB)
+    {
+    }
+
+    if(events[i].mask & IN_MOVE)
+    {
+    }
+  }
 }
 
 void Watcher::FileWatcher::watch()
 {
-  int dbg = 0;
-#define debug INFO("DEBUG: REACHED %d", dbg++)
-
-  debug;
   char buffer[8192] __attribute__((aligned(__alignof__(struct inotify_event))));
   const struct inotify_event* event;
   char* pointer;
@@ -254,7 +341,7 @@ void Watcher::FileWatcher::watch()
       evt.name = std::string(event->name, (size_t) event->len);
       events.push_back(std::move(evt));
     }
-//    prune(events, setup.watching, setup.inotify_file_descriptor);
+
     process_events(events);
     events.clear();
   }
@@ -266,4 +353,5 @@ int Watcher::FileWatcher::initialize()
   MAKE_BLOCK(setup.inotify_file_descriptor);
   return 0;
 }
+
 #endif	// ifdef __linux__
