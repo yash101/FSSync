@@ -213,7 +213,7 @@ int Watcher::FileWatcher::add_directory(const char* directory)
 void Watcher::FileWatcher::process_events(std::vector<Watcher::InotifyEvent>& events)
 {
   WARN("=============PROCESSING EVENTS==============");
-  std::map<std::string, std::vector<Watcher::ActionType> > singletons;
+  std::map<std::string, Watcher::ActionType> singletons;
   std::map<decltype(events.front().cookie), Watcher::Event> nonsingle;
 
   WARN("Received \033[22;31m%lu\e[39m events", events.size());
