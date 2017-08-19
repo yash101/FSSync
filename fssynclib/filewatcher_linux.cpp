@@ -247,6 +247,8 @@ void Watcher::FileWatcher::process_events(std::vector<Watcher::InotifyEvent>& ev
           ERROR("Failed to create inotify watch: errno=%d (%s)", err, strerror(err));
           continue;
         }
+
+        setup.watching[item.wd] = item.wd;
       }
       //If a regular file
       else if(S_ISREG(st.st_mode) != 0)

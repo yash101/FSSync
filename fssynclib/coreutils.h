@@ -14,10 +14,10 @@
 #define ERROR(fmt, args ...) printf(("\033[22;31m[ERROR] (%d:%s): " + std::string(fmt) + "\e[39m\n").c_str(), __LINE__, __FILE__, ## args)
 #define FATAL(fmt, args ...) printf(("\033[22;31m[FATAL] (%d:%s): " + std::string(fmt) + "\e[39m\n").c_str(), __LINE__, __FILE__, ## args)
 #else
-#define INFO(fmt, args ...) {}
-#define WARN(fmt, args ...) {}
-#define ERROR(fmt, args ...) {}
-#define FATAL(fmt, args ...) {}
+#define INFO(fmt, args ...)
+#define WARN(fmt, args ...)
+#define ERROR(fmt, args ...)
+#define FATAL(fmt, args ...)
 #endif
 
 #ifdef DISABLE_INFO
